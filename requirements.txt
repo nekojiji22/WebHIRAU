@@ -1,0 +1,7 @@
+dwave-ocean-sdk
+openjij
+osmnx
+matplotlib
+geocoder
+streamlit
+numpy
