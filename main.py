@@ -73,13 +73,20 @@ if 'fig_map' not in st.session_state:
 button_map = fig_left_column.button('配置リセット')
 if button_map:
     st.session_state.fig_map, ax_map, st.session_state.G, st.session_state.route_list, st.session_state.nodes_for_plot, st.session_state.nodes_color_list = HIRAU.map(geo_address, S, M, E)
+    st.session_state.display_route = False
 fig_left_column.pyplot(st.session_state.fig_map, caption='map', use_column_width=True)
 
 ##### Run button #####
 button_main = fig_right_column.button('誘導経路探索')
 if button_main:
-    fig_route, ax_route = HIRAU.main(st.session_state.G, S, M, E, st.session_state.route_list, st.session_state.nodes_for_plot, st.session_state.nodes_color_list, token)
-    fig_right_column.pyplot(fig_route, caption='route', use_column_width=True)
+    st.session_state.fig_route, st.session_state.ax_route, st.session_state.answer_list = HIRAU.main(st.session_state.G, S, M, E, st.session_state.route_list, st.session_state.nodes_for_plot, st.session_state.nodes_color_list, token)
+    st.session_state.display_route = True
+
+if 'display_route' not in st.session_state: 
+    st.session_state.display_route = False
+
+if st.session_state.display_route:
+    fig_right_column.pyplot(st.session_state.fig_route, caption='route', use_column_width=True)
     st.write(f'黄線：ひらう経路')
     st.write(f'青線：ひらわない経路')
 
@@ -90,3 +97,12 @@ st.write(f'緑：避難弱者（{M}人）')
 st.write(f'白：避難所（{E}カ所）')
 
 
+if st.session_state.display_route:
+    indiv_left_column, indiv_right_column = st.columns(2)
+
+    iLeader = indiv_left_column.selectbox(
+        '表示するリーダー番号を選択して下さい。',
+        list(range(1,S+1))
+    )
+    fig_indiv, ax_indiv = HIRAU.individual(iLeader-1, st.session_state.G, S, M, E, st.session_state.answer_list, st.session_state.route_list, st.session_state.nodes_for_plot, st.session_state.nodes_color_list)
+    indiv_right_column.pyplot(fig_indiv, caption='map', use_column_width=True)

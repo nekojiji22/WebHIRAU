@@ -266,7 +266,35 @@ def main(G, S, M, E, route_list, nodes_for_plot, nodes_color_list, token):
     total_length += len_route(G,answer_route_list[i])
   print("制約違反数", violation(answer), "　リーダー数", S, "　答えの経路数", sum(answer) )
   print("答えの平均距離/候補の平均距離", (total_length/sum(answer))/len_ave )
-  return fig, ax
-#############
+  return fig, ax, answer_list
 
+
+##########
+def individual(iLeader, G, S, M, E, answer_list, route_list, nodes_for_plot, nodes_color_list):
+  ### 経路インデックスを返す関数 ###
+  #  route_list の並びに対応
+  #  s:リーダー番号
+  #　k:各リーダーに対する経路番号
+  # def x_indx(k,s):
+  #   i = k + s*Ns
+  #   return i
+  Nh = M
+  Ne = E * K
+  Ns = Nh + Ne
+  # N = S * Ns
+  ### 結果表示 ###
+  answer_route_list = []
+  answer_color_list = []
+  # answer_list = np.where(answer == 1)
+  # answer_listには、採用された経路インデックスのリストが入っている。
+  # 正常に動作していれば、answer_list[0][k]がk番目のリーダーの経路のはず
+  answer_index = answer_list[0][iLeader]
+  answer_route_list.append(route_list[answer_index])
+  if answer_index%Ns < M:
+    answer_color_list.append('y') # ひらう経路の色
+  else:
+    answer_color_list.append('b') # ひらわない経路の色
+  color_list = answer_color_list + nodes_color_list
+  fig, ax = ox.plot_graph_routes(G, answer_route_list + nodes_for_plot, route_colors=color_list, route_alpha=0.7)
+  return fig, ax
 
