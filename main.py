@@ -14,7 +14,7 @@ import HIRAU
 param_column, logo_column = st.columns(2)
 
 img = Image.open('HIRAU_logo.png')
-logo_column.image(img, caption='HIRAU v3.1', use_column_width=True)
+logo_column.image(img, caption='HIRAU v3.2', use_column_width=True)
 
 ### パラメータ入力 ###
 geo_address = param_column.text_input('住所入力',value='宮城県仙台市青葉区')
@@ -44,8 +44,8 @@ E = param_column.number_input(
 )
 
 token = '' # 空欄だとOpenJij。正しいのを入れるとD-Wave Hybrid Solver
-if st.checkbox('詳細設定'):
-    token = st.text_input('D-Wave トークンを入れて下さい (空欄の場合OpenJijを使います。)',value='', type='password')
+if param_column.checkbox('量子計算機で加速'):
+    token = param_column.text_input('D-Wave トークン (空欄:OpenJij)',value='', type='password')
 
 # K = 3 # ひらわない経路の候補数
 # nSample = 3 # OpenJijの試行回数
