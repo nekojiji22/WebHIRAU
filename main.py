@@ -45,8 +45,7 @@ E = param_column.number_input(
 
 token = '' # 空欄だとOpenJij。正しいのを入れるとD-Wave Hybrid Solver
 if st.checkbox('詳細設定'):
-    st.write('D-Wave トークン (空欄の場合OpenJijを使います。)')
-    token = st.text_input('トークンを入れて下さい',value='')
+    token = st.text_input('D-Wave トークンを入れて下さい (空欄の場合OpenJijを使います。)',value='', type='password')
 
 # K = 3 # ひらわない経路の候補数
 # nSample = 3 # OpenJijの試行回数
