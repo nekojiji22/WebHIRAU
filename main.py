@@ -3,11 +3,6 @@ import streamlit as st
 from PIL import Image # 画像表示
 import numpy as np
 import matplotlib.pyplot as plt
-# import osmnx as ox
-# import geocoder as geo
-# import networkx as nx
-# from openjij import SQASampler
-# from dwave.system import LeapHybridSampler #,DWaveSampler, EmbeddingComposite
 import HIRAU
 
 """
@@ -19,7 +14,7 @@ import HIRAU
 param_column, logo_column = st.columns(2)
 
 img = Image.open('HIRAU_logo.png')
-logo_column.image(img, caption='HIRAU v3.0', use_column_width=True)
+logo_column.image(img, caption='HIRAU v3.1', use_column_width=True)
 
 ### パラメータ入力 ###
 geo_address = param_column.text_input('住所入力',value='宮城県仙台市青葉区')
@@ -48,13 +43,15 @@ E = param_column.number_input(
     value = 4
 )
 
-
 token = '' # 空欄だとOpenJij。正しいのを入れるとD-Wave Hybrid Solver
+if st.checkbox('詳細設定'):
+    st.write('D-Wave トークン (空欄の場合OpenJijを使います。)')
+    token = st.text_input('トークンを入れて下さい',value='')
 
-K = 3 # ひらわない経路の候補数
-nSample = 3 # OpenJijの試行回数
-distance = 0.0050 # 地図範囲
-aspect_ratio = 1.3
+# K = 3 # ひらわない経路の候補数
+# nSample = 3 # OpenJijの試行回数
+# distance = 0.0050 # 地図範囲
+# aspect_ratio = 1.3
 
 route_list = []
 nodes_for_plot = []

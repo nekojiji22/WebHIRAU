@@ -1,5 +1,5 @@
 ##################
-### HIRAU v3.0 ###
+### HIRAU v3.2 ###
 ##################
 
 ### header ###
@@ -11,12 +11,13 @@ import networkx as nx
 from openjij import SQASampler
 from dwave.system import LeapHybridSampler #,DWaveSampler, EmbeddingComposite
 
+# パラメータ（簡単のため固定）
 K = 3 # ひらわない経路の候補数
 nSample = 3 # OpenJijの試行回数
 distance = 0.0050 # 地図範囲
 aspect_ratio = 1.3
 
-### functions ###
+### 密行列を辞書型に変換する関数 ###
 def toDict(full):
   dict = {}
   for i in range(full.shape[0]):
@@ -25,7 +26,10 @@ def toDict(full):
         dict[(i,j)] = full[i][j]
   return dict
 
-### 道路rを番号で定義 ###
+### ルートリスト中に含まれる全道路要素に番号rを割り当てた辞書型配列を返す
+### {"(p1,p2)": r}
+###  p1,p2: ノードのインデックス(osmnx)
+###  r: 道路のインデックス(通し番号)
 def roadDict(route_list):
   road_dict = {}
   r = 0
@@ -37,7 +41,7 @@ def roadDict(route_list):
         r += 1
   return road_dict
 
-### 経路の長さを返す関数 ###
+### 経路の長さを返す ###
 def len_route(G,route):
   L = 0.0
   for l in range(len(route)-1):
@@ -46,18 +50,25 @@ def len_route(G,route):
     L += G[i][j][0]['length']
   return L
 
+### 指定された経路を長くする ###
 def extend_used_route(G,route,extend_factor):
   for k in range(len(route)-1):
     i = route[k]
     j = route[k+1]
     G[i][j][0]['length'] *= extend_factor
 
+### 指定された経路を短くする（元の長さに戻す） ###
 def restore_used_route(G,route,extend_factor):
   for k in range(len(route)-1):
     i = route[k]
     j = route[k+1]
     G[i][j][0]['length'] /= extend_factor
 
+#############
+### QA実行 ###
+#############
+### tokenが空ならシミュレータ、そうでなければD-Waveに投げる。
+### 結果の中で、最もエネルギーの低いものを返す
 def x_QA(Qdict, nSample, token):
   if token == "":
     OJij_sampler = SQASampler()
@@ -76,6 +87,7 @@ def x_QA(Qdict, nSample, token):
     print("Returned from D-Wave!")
   return answer
 
+### Map取得 ###
 def geometry(geo_address,distance,aspect_ratio):
   geo_location = geo.osm(geo_address)
   lat = geo_location.latlng[0]
@@ -103,7 +115,9 @@ def geometry(geo_address,distance,aspect_ratio):
   return G, node_list
 
 
-#####################
+###############
+### 経路生成 ###
+###############
 def map(geo_address, S, M, E):
   ### 経路インデックスを返す関数 ###
   def x_indx(k,s):
@@ -173,7 +187,10 @@ def map(geo_address, S, M, E):
         restore_used_route(G,route_list[-k-1],route_penalty_factor) # 一番後ろの要素は [-1]
   return fig, ax, G, route_list, nodes_for_plot, nodes_color_list
 
-##########
+
+#############
+### メイン ###
+#############
 def main(G, S, M, E, route_list, nodes_for_plot, nodes_color_list, token):
   ### 経路インデックスを返す関数 ###
   def x_indx(k,s):
@@ -269,7 +286,7 @@ def main(G, S, M, E, route_list, nodes_for_plot, nodes_color_list, token):
   return fig, ax, answer_list
 
 
-##########
+### リーダーごとの経路を表示 ###
 def individual(iLeader, G, S, M, E, answer_list, route_list, nodes_for_plot, nodes_color_list):
   ### 経路インデックスを返す関数 ###
   #  route_list の並びに対応
