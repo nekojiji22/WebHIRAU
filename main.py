@@ -17,7 +17,7 @@ img = Image.open('HIRAU_logo.png')
 logo_column.image(img, caption='HIRAU v3.2', use_column_width=True)
 
 ### パラメータ入力 ###
-geo_address = param_column.text_input('住所入力',value='宮城県仙台市青葉区')
+geo_address = param_column.text_input('住所入力',value='青葉区, 宮城県, 仙台市')
 
 # リーダーの数
 S = param_column.number_input(
